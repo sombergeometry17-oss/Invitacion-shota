@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pregunta Seria... 🤭</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #5d5bde; /* Fondo morado/azul del video */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Contenedor tipo Ventana Flotante */
+        .card {
+            background: #fffdf0; /* Color cremita claro */
+            border: 3px solid #000;
+            border-radius: 20px;
+            padding: 30px;
+            width: 380px;
+            text-align: center;
+            box-shadow: 8px 8px 0px #000;
+            position: relative;
+            display: none; /* Se controlará con JS */
+        }
+
+        .card.active {
+            display: block;
+        }
+
+        /* Etiquetas superiores de cada paso */
+        .badge {
+            background: #fbe37e;
+            border: 2px solid #000;
+            border-radius: 10px;
+            padding: 5px 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+
+        h2 {
+            font-size: 1.6rem;
+            margin-bottom: 10px;
+            color: #000;
+        }
+
+        p {
+            font-size: 0.9rem;
+            color: #555;
+            margin-bottom: 20px;
+        }
+
+        /* Botones Base estilo Neo-brutalismo */
+        .btn {
+            background: #a3e635; /* Verde/Amarillo llamativo */
+            border: 3px solid #000;
+            border-radius: 12px;
+            padding: 12px 25px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 4px 4px 0px #000;
+            transition: all 0.1s ease;
+        }
+
+        .btn:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0px #000;
+        }
+
+        /* Contenedor de Botones Sí y No */
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+            height: 60px;
+            position: relative;
+        }
+
+        #btn-no {
+            background: #f3f4f6;
+            position: absolute;
+        }
+
+        #btn-si {
+            background: #c084fc; /* Morado claro para el Sí */
+            padding: 12px 40px;
+        }
+
+        /* Formularios de Fecha y Hora */
+        .form-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #000;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        /* Cuadrícula de comida (Paso 3) */
+        .grid-food {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .food-item {
+            background: #fff;
+            border: 2px solid #000;
+            border-radius: 10px;
+            padding: 10px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: bold;
+            box-shadow: 2px 2px 0px #000;
+        }
+
+        .food-item.selected {
+            background: #fbe37e;
+            transform: translate(1px, 1px);
+            box-shadow: 1px 1px 0px #000;
+        }
+
+        .food-item span {
+            display: block;
+            font-size: 1.5rem;
+            margin-bottom: 3px;
+        }
+
+        /* Animación/Decoración final */
+        .car-animation {
+            font-size: 2.5rem;
+            margin: 15px 0;
+            animation: drive 3s linear infinite;
+        }
+
+        @keyframes drive {
+            0% { transform: translateX(-30px); }
+            50% { transform: translateX(30px); }
+            100% { transform: translateX(-30px); }
+        }
+
+        /* Estilo para el mensaje de broma al final */
+        .rial-message {
+            margin-top: 20px;
+            font-size: 0.95rem;
+            font-weight: bold;
+            color: #dc2626; /* Color rojo sutil para destacar la broma */
+            background-color: #fee2e2;
+            border: 2px dashed #dc2626;
+            border-radius: 10px;
+            padding: 8px;
+        }
+
+        /* Decoración de Gatos/Stickers flotantes simulados alrededor de la tarjeta */
+        .sticker {
+            position: absolute;
+            font-size: 2rem;
+            pointer-events: none;
+        }
+        .st-1 { top: -40px; left: -30px; transform: rotate(-15deg); }
+        .st-2 { bottom: -30px; right: -20px; transform: rotate(15deg); }
+    </style>
+</head>
+<body>
+
+    <!-- PASO 1: LA PREGUNTA -->
+    <div class="card active" id="paso1">
+        <div class="sticker st-1">🐱</div>
+        <div class="sticker st-2">🐶</div>
+        <span class="badge">Pregunta Seria</span>
+        <h2>¿Irías a una cita conmigo?</h2>
+        <p>Sí o No</p>
+        <div class="btn-group">
+            <button class="btn" id="btn-si" onclick="siguientePaso(2)">Sí</button>
+            <button class="btn" id="btn-no" onmouseover="moverBotonNo()" onclick="moverBotonNo()">No</button>
+        </div>
+    </div>
+
+    <!-- PASO 1.5: MOMENTO EMOTIVO -->
+    <div class="card" id="paso1_5">
+        <span class="badge">Momento Emotivo</span>
+        <h2>espera... ¿dijiste que sí? 🥺</h2>
+        <p>no me lo creo, mira este gatito</p>
+        <div style="font-size: 4rem; margin-bottom: 20px;">🐱✨</div>
+        <button class="btn" style="background: #a7f3d0; width: 100%;" onclick="siguientePaso(3)">sí, ¡dije que sí! →</button>
+    </div>
+
+    <!-- PASO 2: FECHA Y HORA -->
+    <div class="card" id="paso2">
+        <div class="sticker st-1">📅</div>
+        <span class="badge">Paso 2</span>
+        <h2>¿Cuándo estás libre?</h2>
+        <p>elige el día y la hora</p>
+        
+        <div class="form-group">
+            <label>Día</label>
+            <input type="date" id="fecha">
+        </div>
+        <div class="form-group">
+            <label>Hora</label>
+            <input type="time" id="hora" value="19:00">
+        </div>
+
+        <button class="btn" style="width: 100%; margin-top: 10px;" onclick="guardarFecha()">Siguiente →</button>
+    </div>
+
+    <!-- PASO 3: ¿QUÉ SE TE ANTOJA? -->
+    <div class="card" id="paso3">
+        <span class="badge">Paso 3</span>
+        <h2>¿Qué se te antoja?</h2>
+        <p>toca lo que más te guste</p>
+
+        <div class="grid-food">
+            <div class="food-item" onclick="toggleComida(this, 'Pizza 🍕')"><span>🍕</span>Pizza</div>
+            <div class="food-item" onclick="toggleComida(this, 'Sushi 🍣')"><span>🍣</span>Sushi</div>
+            <div class="food-item" onclick="toggleComida(this, 'Tacos 🌮')"><span>🌮</span>Tacos</div>
+            <div class="food-item" onclick="toggleComida(this, 'Burgers 🍔')"><span>🍔</span>Burger</div>
+            <div class="food-item" onclick="toggleComida(this, 'Pasta 🍝')"><span>🍝</span>Pasta</div>
+            <div class="food-item" onclick="toggleComida(this, 'Ramen 🍜')"><span>🍜</span>Ramen</div>
+            <div class="food-item" onclick="toggleComida(this, 'Postre 🍰')"><span>🍰</span>Postre</div>
+            <div class="food-item" onclick="toggleComida(this, 'Café ☕')"><span>☕</span>Café</div>
+            <div class="food-item" onclick="toggleComida(this, 'Brunch 🥞')"><span>🥞</span>Brunch</div>
+        </div>
+
+        <button class="btn" style="width: 100%; background: #fde047;" onclick="finalizarCita()">Listo →</button>
+    </div>
+
+    <!-- PASO FINAL: CONFIRMACIÓN -->
+    <div class="card" id="pasoFinal">
+        <div class="sticker st-1">🥳</div>
+        <span class="badge" style="background: #fbcfe8;">Confirmado</span>
+        <h2>¡Nos vemos! 🎉</h2>
+        <h3 id="resumen-hora" style="font-size: 2rem; margin: 10px 0;">7:00 pm</h3>
+        
+        <div class="car-animation">🚙💨</div>
+
+        <p id="resumen-texto" style="margin-bottom: 10px;">Te espero. ¡Paso por ti! 📝</p>
+        
+        <div id="comidas-elegidas" style="display: flex; gap: 5px; justify-content: center; flex-wrap: wrap; margin-bottom: 15px;">
+            <!-- Aquí irán los badges de comida seleccionada -->
+        </div>
+
+        <!-- EL MENSAJE SOLICITADO -->
+        <div class="rial-message">
+            (tu escoge y cuando tenga rial salimos XD)
+        </div>
+    </div>
+
+    <script>
+        let datosCita = {
+            fecha: '',
+            hora: '',
+            comida: []
+        };
+
+        // Función para cambiar de pantalla
+        function cambiarPantalla(actual, siguiente) {
+            document.getElementById(actual).classList.remove('active');
+            document.getElementById(siguiente).classList.add('active');
+        }
+
+        // Control del botón "No" (se escapa)
+        function moverBotonNo() {
+            const btnNo = document.getElementById('btn-no');
+            const x = Math.random() * (180 - (-100)) + (-100);
+            const y = Math.random() * (100 - (-100)) + (-100);
+            
+            btnNo.style.transform = `translate(${x}px, ${y}px)`;
+        }
+
+        // Lógica de flujos
+        function siguientePaso(paso) {
+            if(paso === 2) {
+                cambiarPantalla('paso1', 'paso1_5');
+            } else if(paso === 3) {
+                cambiarPantalla('paso1_5', 'paso2');
+            }
+        }
+
+        function guardarFecha() {
+            const fechaInput = document.getElementById('fecha').value;
+            const horaInput = document.getElementById('hora').value;
+
+            if(!fechaInput) {
+                alert("¡Elige un día primero! 📅");
+                return;
+            }
+
+            datosCita.fecha = fechaInput;
+            datosCita.hora = horaInput;
+
+            cambiarPantalla('paso2', 'paso3');
+        }
+
+        // Selección múltiple de comida
+        function toggleComida(elemento, comida) {
+            elemento.classList.toggle('selected');
+            if(datosCita.comida.includes(comida)) {
+                datosCita.comida = datosCita.comida.filter(item => item !== comida);
+            } else {
+                datosCita.comida.push(comida);
+            }
+        }
+
+        // Mostrar pantalla final con los datos reales
+        function finalizarCita() {
+            if(datosCita.comida.length === 0) {
+                alert("¡Selecciona al menos un antojito! 🍕☕");
+                return;
+            }
+
+            const opciones = { weekday: 'long', day: 'numeric', month: 'long' };
+            const fechaBonita = new Date(datosCita.fecha + 'T00:00:00').toLocaleDateString('es-ES', opciones);
+
+            document.getElementById('resumen-hora').innerText = datosCita.hora;
+            document.getElementById('resumen-texto').innerText = `Te espero el ${fechaBonita}. ¡Paso por ti! 💫`;
+
+            const contenedorComida = document.getElementById('comidas-elegidas');
+            contenedorComida.innerHTML = '';
+            datosCita.comida.forEach(item => {
+                const badge = document.createElement('span');
+                badge.style.cssText = "background: #e0f2fe; border: 2px solid #000; padding: 5px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: bold;";
+                badge.innerText = item;
+                contenedorComida.appendChild(badge);
+            });
+
+            cambiarPantalla('paso3', 'pasoFinal');
+        }
+    </script>
+</body>
+</html>
